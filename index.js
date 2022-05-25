@@ -2,6 +2,7 @@ require('dotenv').config()
 require('./mongo')
 
 const usersRouter = require('./controllers/users')
+const sudokusRouter = require('./controllers/sudokus')
 const loginRouter = require('./controllers/login')
 
 const express = require('express')
@@ -16,6 +17,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/users', usersRouter)
+app.use('/api/sudokus', sudokusRouter)
 app.use('/api/login', loginRouter)
 
 const PORT = process.env.PORT || 4000

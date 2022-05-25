@@ -8,7 +8,12 @@ const sudokuSchema = new Schema(
     },
     state: {
       currentState: String,
-      isSolved: Boolean
+      isSolved: Boolean,
+      time: Number
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
     }
   },
   {
