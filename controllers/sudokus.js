@@ -14,38 +14,56 @@ sudokusRouter.post('/', userExtractor, async (request, response, next) => {
   const { userId } = request
   const user = await User.findById(userId)
 
-  const prevSudoku = await Sudoku.findOne({
-    original,
-    user: userId
-  })
+  // const prevSudoku = await Sudoku.findOne({
+  //   original,
+  //   user: userId
+  // })
 
   if (!original) {
     return response.status(400).json({
       error: 'original sudoku is missing'
     })
   }
-  const newSudoku = new Sudoku({
+  const updateSudoku = {
     original,
     state: {
       currentState,
       time,
       isSolved
     },
-    user: user._id
-  })
+    user: user.id
+  }
 
-  if (prevSudoku) {
-    response.json('sudoku already in use')
-    // hacer que actualice (o buscar método que guarde o actualice mágicamente)
-  } else {
-    try {
-      const savedSudoku = await newSudoku.save()
-      user.sudokus = user.sudokus.concat(savedSudoku._id)
-      await user.save()
-      response.json(savedSudoku)
-    } catch (error) {
-      next(error)
+  const filter = { original, user: userId }
+
+  try {
+    const savedSudoku = await Sudoku.findOneAndUpdate(
+      filter,
+      {
+        $set: updateSudoku,
+        $setOnInsert: Sudoku._id
+      },
+      {
+        new: true,
+        upsert: true,
+        rawResult: true
+      })
+
+    if (savedSudoku.lastErrorObject.updatedExisting) {
+      console.log('updated sudoku', savedSudoku)
+      response.status(200).json(savedSudoku)
+    } else {
+      await User.findByIdAndUpdate(
+        { _id: userId },
+        { $addToSet: { sudokus: savedSudoku.value.id } },
+        { new: true }
+      )
+      console.log('created sudoku', savedSudoku)
+      response.status(201).json(savedSudoku)
     }
+  } catch (error) {
+    console.log(error)
+    next(error)
   }
 })
 

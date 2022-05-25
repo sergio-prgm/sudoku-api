@@ -16,12 +16,13 @@ app.use(cors())
 app.use(express.json())
 
 app.get('/', (req, res) => {
-  res.send('<h1>Welcome to Sudoku API</h1>')
+  res.json({ status: 'server up and running' })
+  console.log('Server succesfully responding to requests')
 })
 
-app.use('/api/users', usersRouter)
-app.use('/api/sudokus', sudokusRouter)
 app.use('/api/login', loginRouter)
+app.use('/api/sudokus', sudokusRouter)
+app.use('/api/users', usersRouter)
 
 app.use(handleErrors)
 app.use(notFound)
