@@ -2,7 +2,7 @@ require('dotenv').config()
 require('./mongo')
 
 const usersRouter = require('./controllers/users')
-const sudokusRouter = require('./controllers/sudokus')
+const sudokuRouter = require('./controllers/sudoku')
 const loginRouter = require('./controllers/login')
 
 const handleErrors = require('./middleware/handleErrors')
@@ -21,12 +21,13 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/login', loginRouter)
-app.use('/api/sudokus', sudokusRouter)
+app.use('/api/sudoku', sudokuRouter)
 app.use('/api/users', usersRouter)
 
 app.use(handleErrors)
 app.use(notFound)
 
 const PORT = process.env.PORT || 4000
+const time = new Date().toLocaleTimeString([], { hourCycle: 'h24', hour: 'numeric', minute: 'numeric' })
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+app.listen(PORT, () => console.log(`Server running on port ${PORT} at ${time}`))

@@ -9,6 +9,7 @@ usersRouter.post('/', async (request, response) => {
 
   const passwordHash = await bcrypt.hash(password, 10)
 
+  console.log(username, password)
   const user = new User({
     username,
     passwordHash
@@ -27,7 +28,7 @@ usersRouter.get('/', userExtractor, async (request, response, next) => {
 
   try {
     const user = await User.find({ _id: userId }).populate('sudokus', {
-      original: 1,
+      ref: 1,
       state: 1
     })
     response.json(user)

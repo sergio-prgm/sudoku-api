@@ -2,12 +2,12 @@ const { Schema, model } = require('mongoose')
 
 const sudokuSchema = new Schema(
   {
-    original: {
+    ref: {
       type: String,
       required: true
     },
     state: {
-      currentState: String,
+      current: String,
       isSolved: Boolean,
       time: Number
     },

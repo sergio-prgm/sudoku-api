@@ -7,6 +7,12 @@ module.exports = (request, response, next) => {
     token = authorization.substring(7)
   }
 
+  if (token === 'unAuthed') {
+    request.unAuthed = true
+    next()
+    return
+  }
+
   const decodedToken = jwt.verify(token, process.env.SECRET)
 
   if (!token || !decodedToken.id) {
