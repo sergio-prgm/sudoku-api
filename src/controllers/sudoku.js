@@ -3,9 +3,6 @@ const userExtractor = require('../middleware/userExtractor')
 const Sudoku = require('../models/Sudoku')
 const User = require('../models/User')
 const fs = require('fs')
-// const easy = require('../assets/easy.json')
-// const medium = require('../assets/medium.json')
-// const hard = require('../assets/hard.json')
 
 sudokuRouter.post('/', userExtractor, async (request, response, next) => {
   const {
@@ -54,7 +51,6 @@ sudokuRouter.post('/', userExtractor, async (request, response, next) => {
       })
 
     if (savedSudoku.lastErrorObject.updatedExisting) {
-      console.log('updated sudoku', savedSudoku)
       response.status(200).json(savedSudoku)
     } else {
       await User.findByIdAndUpdate(
@@ -62,7 +58,6 @@ sudokuRouter.post('/', userExtractor, async (request, response, next) => {
         { $addToSet: { sudokus: savedSudoku.value.id } },
         { new: true }
       )
-      console.log('created sudoku', savedSudoku)
       response.status(201).json(savedSudoku)
     }
   } catch (error) {
@@ -71,7 +66,6 @@ sudokuRouter.post('/', userExtractor, async (request, response, next) => {
   }
 })
 
-// Probably can be done with just one endPoint checking if userId*
 sudokuRouter.get('/:dif/:num', userExtractor, async (request, response, next) => {
   const { dif, num } = request.params
 
@@ -108,18 +102,13 @@ sudokuRouter.get('/:dif/:num', userExtractor, async (request, response, next) =>
     response.json(sudokuToRet)
     return
   }
-  console.log('por si acaso')
   sudoku.push({ ref: `${dif}-${num}`, time: 0 })
   response.json(sudoku)
 })
 
-const easy = require('../assets/easy.json')
-const medium = require('../assets/medium.json')
-const hard = require('../assets/hard.json')
-
 function generateSudoku (dif, num) {
   const result = []
-  const data = fs.readFileSync(`./assets/${nCollection[dif]}.json`, { encoding: 'utf-8', flag: 'rs+' })
+  const data = fs.readFileSync(`./src/assets/${nCollection[dif]}.json`, { encoding: 'utf-8', flag: 'rs+' })
 
   const sudoku = JSON.parse(data)[num]
 
@@ -141,11 +130,6 @@ const nCollection = {
   e: 'easy',
   m: 'medium',
   h: 'hard'
-}
-const collection = {
-  e: easy,
-  m: medium,
-  h: hard
 }
 
 class Cell {
